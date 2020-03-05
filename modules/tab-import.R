@@ -1,4 +1,5 @@
 library(shiny)
+library(DT)
 
 tabImportUI <- function(id) {
   ns <- NS(id)
@@ -96,9 +97,16 @@ tabImport <- function(input, output, session) {
     pool_slim <- p[c("player_id", "player", "team", "opp_team", "position", "salary", "fpts_proj")]
     pool_slim <- pool_slim[order(-pool_slim[["fpts_proj"]]),]
     
-    DT::datatable(pool_slim, options = list(pageLength = 15)) %>% 
+    DT::datatable(pool_slim, options = list(pageLength = 15),) %>% 
       DT::formatRound("fpts_proj", 2)
   })
+  
+
+    
+    
+  
+  
+  
   
   # return a list of reactives
   list(

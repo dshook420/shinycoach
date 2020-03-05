@@ -1,5 +1,7 @@
 library(shiny)
 
+
+
 tabOptimizeUI <- function(id) {
   ns <- NS(id)
   
@@ -15,7 +17,7 @@ tabOptimizeUI <- function(id) {
         # Panel: Number of lineups
         wellPanel(
           # Input: Number of lineups
-          sliderInput(ns("numLineups"), "Num of Lineups:", 1, 5, 3, step = 1, round = TRUE)
+          sliderInput(ns("numLineups"), "Num of Lineups:", 1, 150, 1, step = 1, round = TRUE)
         ),
         
         # Panel: Stacking
@@ -25,7 +27,9 @@ tabOptimizeUI <- function(id) {
           wellPanel(
             # Input: Stack Sizes
             sliderInput(ns("stackSize1"), "Stack Size 1:", 1, 4, 1, step = 1, round = TRUE),
-            sliderInput(ns("stackSize2"), "Stack Size 2:", 1, 4, 1, step = 1, round = TRUE)
+            sliderInput(ns("stackSize2"), "Stack Size 2:", 1, 4, 1, step = 1, round = TRUE),
+            sliderInput(ns("exposure"), "Global Exposure:", .1, 1, 1, step = .1, round = TRUE),
+            sliderInput(ns("rand"), "randomness:", 0, 10, 0, step = .5, round = TRUE)
           )
         )
         ),
@@ -42,8 +46,12 @@ tabOptimizeUI <- function(id) {
   )
 }
 
+
+
 tabOptimize <- function(input, output, session, pool, model,
                         siteChoices, sportChoices) {
+  
+  
 
   # reender module input to a fake output reactive
   # this is used to determine whether or not to show stacking input panel
@@ -59,14 +67,21 @@ tabOptimize <- function(input, output, session, pool, model,
     # check pool before building model
     p <- pool()
     m <- model()
+    x <- p[["fpts_proj"]]
+    
+   
 
     validate(
       need(all(!is.na(p[["fpts_proj"]])), message = "fpts_proj can't be empty or contain NAs")
     )
 
     if (sportChoices() != "NASCAR") {
+      
+     
+      
+      
       optimize_generic(p, m, L = input$numLineups, 
-                       stack_sizes = c(input$stackSize1, input$stackSize2))
+                       stack_sizes = c(input$stackSize1, input$stackSize2), max_exposure = c(input$exposure), randomness = function(x) rnorm(nrow(p), p[["fpts_proj"]], c(input$rand)) )
     } else {
       # no stacking in nascar
       optimize_generic(p, m, L = input$numLineups)

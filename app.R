@@ -13,7 +13,7 @@ source("modules/tab-instructions.R")
 # Define UI for application 
 ui <- fluidPage(
   # Theme
-  theme = shinythemes::shinytheme("cosmo"),
+  theme = shinythemes::shinytheme("simplex"),
   
   # Title Bar
   titleBarUI("title", "Coach | DFS Lineup Optimizer", 
